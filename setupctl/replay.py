@@ -123,11 +123,11 @@ def _run_one(
     reg: HookReg, item: CorpusItem, data: dict[str, Any], env: Mapping[str, str], sb: SandboxConfig, root: Path
 ) -> Outcome:
     call_dir = _call_dir(root, item)
-    call_env = {**env, "CLAUDE_CONFIG_DIR": str(call_dir), "CLAUDE_PROJECT_DIR": item.cwd}
+    call_env = {**env, "CLAUDE_CONFIG_DIR": str(call_dir), "CLAUDE_PROJECT_DIR": item.cwd or "/"}
     try:
         p = subprocess.run(["bash", "-c", reg.command], input=json.dumps(data), capture_output=True, text=True,
                            timeout=sb.per_call_timeout_s, env=call_env, check=False,
-                           cwd=item.cwd if Path(item.cwd).is_dir() else "/")
+                           cwd=item.cwd if item.cwd and Path(item.cwd).is_dir() else "/")
     except subprocess.TimeoutExpired:
         return Outcome(hook_id(reg), item.item_id, -1, None, None, None, "", True, False)
     finally:

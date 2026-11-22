@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import random
+import re
 from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -39,6 +40,7 @@ class CorpusStats:
     calls_seen: int = 0
     calls_unique: int = 0
     per_tool: dict[str, int] = field(default_factory=dict)
+    enriched: dict[str, int] = field(default_factory=dict)  # regex -> matching unique calls seen
 
 
 @dataclass(frozen=True)
@@ -46,6 +48,11 @@ class SamplePlan:
     per_tool_default: int
     per_tool: Mapping[str, int]
     seed: int
+    # Extra calls kept beyond the per-tool sample: a random sample rarely hits a guard's trigger (an sbatch
+    # line, a docker run), so every call whose input matches one of these regexes is also sampled, capped per
+    # regex. Matched against the JSON of the tool input.
+    enrich: tuple[str, ...] = ()
+    enrich_cap: int = 0
 
     def size_for(self, tool: str) -> int:
         return self.per_tool.get(tool, self.per_tool_default)
@@ -94,6 +101,9 @@ def build_corpus(transcripts: Iterable[Path], plan: SamplePlan) -> tuple[list[Co
     seen: set[str] = set()
     pools: dict[str, list[CorpusItem]] = {}
     counts: dict[str, int] = {}
+    patterns = [re.compile(r) for r in plan.enrich]
+    extra: dict[int, list[CorpusItem]] = {i: [] for i in range(len(patterns))}
+    extra_counts: dict[int, int] = dict.fromkeys(extra, 0)
     for path in sorted(set(transcripts)):
         stats.files += 1
         for item in _calls_in(path, stats):
@@ -101,6 +111,14 @@ def build_corpus(transcripts: Iterable[Path], plan: SamplePlan) -> tuple[list[Co
             if item.item_id in seen:
                 continue
             seen.add(item.item_id)
+            text = json.dumps(item.tool_input) if patterns else ""
+            for i, pat in enumerate(patterns):
+                if pat.search(text):
+                    m = extra_counts[i] = extra_counts[i] + 1
+                    if len(extra[i]) < plan.enrich_cap:
+                        extra[i].append(item)
+                    elif (j := rng.randrange(m)) < plan.enrich_cap:
+                        extra[i][j] = item
             n = counts[item.tool_name] = counts.get(item.tool_name, 0) + 1
             pool = pools.setdefault(item.tool_name, [])
             k = plan.size_for(item.tool_name)
@@ -110,7 +128,12 @@ def build_corpus(transcripts: Iterable[Path], plan: SamplePlan) -> tuple[list[Co
                 pool[j] = item
     stats.calls_unique = len(seen)
     stats.per_tool = {t: len(p) for t, p in sorted(pools.items())}
-    return [i for t in sorted(pools) for i in pools[t]], stats
+    stats.enriched = {plan.enrich[i]: extra_counts[i] for i in extra}
+    chosen: dict[str, CorpusItem] = {i.item_id: i for t in sorted(pools) for i in pools[t]}
+    for i in sorted(extra):
+        for item in extra[i]:
+            chosen.setdefault(item.item_id, item)
+    return list(chosen.values()), stats
 
 
 def write_corpus(items: list[CorpusItem], stats: CorpusStats, out_dir: Path) -> None:

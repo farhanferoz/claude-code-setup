@@ -5,6 +5,16 @@ per_tool_default = 300
 seed = 0
 # Bash carries most guards, so it gets a bigger sample.
 per_tool = { Bash = 3000 }
+# Trigger words of the guards, so calls that make them decide are in the corpus even when the random sample
+# misses them. Up to enrich_cap matching calls are kept per pattern.
+enrich_cap = 150
+enrich = [
+  '\bsbatch\b|\bsrun\b|submit\.py', 'docker (run|compose)|compose up', '\bagy\b', 'claude -p|claude --print',
+  '\b(p?kill|killall)\b', '\btimeout\b', '\bsleep\b|while true|until ', 'git commit|gh pr|gh release',
+  'pytest|bats|npm test', 'run_in_background', '--network host|--net=host', 'ollama|llama-server|vllm',
+  'curl |wget ', 'ssh |scp |rsync ', '\.env\b|credentials|token|secret', 'apt |pip install|uv tool',
+  'upgrade|install\.sh', 'subagent|Agent|task-worker',
+]
 
 [sandbox]
 # container: re-run inside a read-only view of the host (setupctl/isolation.py); none: run hooks directly.

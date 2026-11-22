@@ -60,3 +60,14 @@ def test_bad_lines_counted_results_paired_and_subagents_globbed(tmp_path: Path) 
     assert items["Read"].tool_response is None and not items["Read"].failed
     assert json.loads((out / "stats.json").read_text())["lines_bad"] == 1
     assert (out / "items.jsonl").stat().st_mode & 0o777 == 0o600
+
+
+def test_rare_trigger_calls_are_kept_beyond_the_random_sample(tmp_path: Path) -> None:
+    lines = [_use(f"b{i}", "Bash", {"command": f"echo {i}"}) for i in range(200)]
+    lines.append(_use("s1", "Bash", {"command": "sbatch job.sh"}))
+    t = _write(tmp_path / "t.jsonl", lines)
+    plain, _ = build_corpus([t], SamplePlan(100, {"Bash": 5}, seed=0))
+    enriched, stats = build_corpus([t], SamplePlan(100, {"Bash": 5}, seed=0, enrich=(r"\bsbatch\b",), enrich_cap=3))
+    assert "sbatch job.sh" in {i.tool_input["command"] for i in enriched}
+    assert len(enriched) == len(plain) + ("sbatch job.sh" not in {i.tool_input["command"] for i in plain})
+    assert stats.enriched == {r"\bsbatch\b": 1}

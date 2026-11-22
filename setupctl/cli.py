@@ -80,6 +80,8 @@ def _corpus_build(args: argparse.Namespace) -> int:
         per_tool_default=args.per_tool_default if args.per_tool_default is not None else conf["per_tool_default"],
         per_tool=per_tool,
         seed=args.seed if args.seed is not None else conf["seed"],
+        enrich=tuple(conf.get("enrich", ())),
+        enrich_cap=conf.get("enrich_cap", 0),
     )
     paths = [Path(p) for p in glob.glob(_expand(args.transcripts or conf["transcripts"]), recursive=True)]
     items, stats = corpus.build_corpus(paths, plan)

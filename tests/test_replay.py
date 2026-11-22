@@ -22,8 +22,9 @@ def _docker_works() -> bool:
 needs_docker = pytest.mark.skipif(not _docker_works(), reason="needs docker with the ubuntu:24.04 image")
 
 
-def _item(tool: str = "Bash", *, response: dict | None = None, failed: bool = False, uid: str = "i1") -> CorpusItem:
-    return CorpusItem(uid, tool, {"command": "ls"}, "/", "s", "/nowhere/t.jsonl", "toolu_1", response, failed)
+def _item(tool: str = "Bash", *, response: dict | None = None, failed: bool = False, uid: str = "i1",
+          cwd: str = "/") -> CorpusItem:
+    return CorpusItem(uid, tool, {"command": "ls"}, cwd, "s", "/nowhere/t.jsonl", "toolu_1", response, failed)
 
 
 def _reg(script: Path, event: str = "PreToolUse", matcher: str = "Bash") -> HookReg:
@@ -67,7 +68,8 @@ echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","updatedInput":{"comma
     slow = _script(tmp_path, "slow.sh", "sleep 5")
     post = _script(tmp_path, "post.sh", "cat >/dev/null; exit 2")
     regs = [_reg(deny), _reg(rewrite), _reg(slow), _reg(post, "PostToolUse")]
-    out = {o.hook_id.split("|")[-1]: o for o in rp.replay(regs, [_item()], _sb(tmp_path, timeout=1), {})}
+    # cwd "" occurs in real transcripts; it must run from "/" rather than crash the replay
+    out = {o.hook_id.split("|")[-1]: o for o in rp.replay(regs, [_item(cwd="")], _sb(tmp_path, timeout=1), {})}
     assert out["deny.sh"].decision == "deny"
     assert out["rewrite.sh"].updated_input == {"command": "ls -k"}
     assert out["slow.sh"].timed_out
