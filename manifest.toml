@@ -6,7 +6,7 @@
 [[piece]]
 name = "ccage"
 repo = "farhanferoz/ccage"
-version = "6567d4c9f6a152dc8fa91aec5f0f18feb3d22496"
+version = "4a616d98502d6042cbf9298c0167f436bc53d456"
 kind = "ccage"
 clone_dir = "ccage"
 install = ["./install.sh"]
@@ -16,7 +16,7 @@ optional = false
 [[piece]]
 name = "claude-skills"
 repo = "farhanferoz/claude-skills"
-version = "2233cc4d0bd0f645511d904d25a04fb2fc05191a"
+version = "d00323812fd2f0291ede4ab668f820af36833d49"
 kind = "marketplace"
 clone_dir = "claude-skills"
 install = ["claude plugin marketplace add farhanferoz/claude-skills"]
