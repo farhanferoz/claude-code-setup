@@ -16,7 +16,7 @@ optional = false
 [[piece]]
 name = "claude-skills"
 repo = "farhanferoz/claude-skills"
-version = "1284ea7347fc545d318d216dba8d55e2a847f461"
+version = "0b6bad3a76177ca6ae0673158109cef317578850"
 kind = "marketplace"
 clone_dir = "claude-skills"
 install = ["claude plugin marketplace add farhanferoz/claude-skills"]
@@ -37,7 +37,7 @@ optional = false
 [[piece]]
 name = "corpus-search"
 repo = "farhanferoz/corpus-search"
-version = "c2abf09f8f6ec7b55a976a46cbdc485e4852d3a3"
+version = "1eeeeaf7f5763463ba56b24ace17e8b65ba3d2cd"
 kind = "uv-tool"
 clone_dir = "corpus-search"
 install = ["uv tool install --editable ."]  # inferred: README documents only `uv sync` and `uv run`
