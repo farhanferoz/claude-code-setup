@@ -6,7 +6,7 @@
 [[piece]]
 name = "ccage"
 repo = "farhanferoz/ccage"
-version = "87dbc6f1801a29afe7c425490495229c07f405dc"
+version = "6567d4c9f6a152dc8fa91aec5f0f18feb3d22496"
 kind = "ccage"
 clone_dir = "ccage"
 install = ["./install.sh"]
