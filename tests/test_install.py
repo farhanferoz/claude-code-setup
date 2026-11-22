@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from setupctl.cli import main
 from setupctl.install import InstallError, Options, Outcome, doctor, install, select
 from setupctl.manifest import Piece, PieceKind
 
@@ -63,9 +64,11 @@ def test_dry_run_runs_nothing_and_a_failure_does_not_stop_the_rest(tmp_path: Pat
     assert run.calls == [] and {r.outcome for r in results} == {Outcome.PLANNED}
     assert any("would run" in line and "make install" in line for line in out)
     failing = Recorder(fail="git clone")
+    said: list[str] = []
     results = install([_piece("a"), _piece("b"), _piece("p", PieceKind.LINK_ONLY)],
-                      Options(tmp_path, tmp_path / "src", False), failing, say=lambda _: None)
+                      Options(tmp_path, tmp_path / "src", False), failing, say=said.append)
     assert [r.outcome for r in results] == [Outcome.FAILED, Outcome.FAILED, Outcome.LINK]
+    assert "https://github.com/me/p" in said[-1]
 
 
 def test_doctor_names_the_failing_piece_and_its_install_line() -> None:
@@ -73,3 +76,21 @@ def test_doctor_names_the_failing_piece_and_its_install_line() -> None:
     results = doctor([_piece("a"), _piece("b", check=("b --broken",))], Recorder(fail="--broken"), say=out.append)
     assert [r.outcome for r in results] == [Outcome.INSTALLED, Outcome.FAILED]
     assert "./install --only b" in out[-1]
+
+
+def test_doctor_exits_zero_only_when_every_check_passes(tmp_path: Path) -> None:
+    def manifest(check: str) -> str:
+        path = tmp_path / f"{check}.toml"
+        path.write_text(f'''[[piece]]
+name = "a"
+repo = "me/a"
+version = "v1"
+kind = "uv-tool"
+clone_dir = "a"
+install = ["true"]
+check = ["{check}"]
+optional = false
+''')
+        return str(path)
+    assert main(["doctor", "--manifest", manifest("true")]) == 0
+    assert main(["doctor", "--manifest", manifest("false")]) == 1
