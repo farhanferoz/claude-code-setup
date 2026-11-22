@@ -6,7 +6,7 @@
 [[piece]]
 name = "ccage"
 repo = "farhanferoz/ccage"
-version = "f30253826137d9cd6df7d9c58dde42c7962300db"
+version = "4978b732f903a624166eca00ae11f62f7daa73f0"
 kind = "ccage"
 clone_dir = "ccage"
 install = ["./install.sh"]
@@ -16,7 +16,7 @@ optional = false
 [[piece]]
 name = "claude-skills"
 repo = "farhanferoz/claude-skills"
-version = "6bb36182a79371029aaec3349796ad4c0b79d0e3"
+version = "017d2c72969c27862e4193e664ba8c0988f0a2ad"
 kind = "marketplace"
 clone_dir = "claude-skills"
 install = ["claude plugin marketplace add farhanferoz/claude-skills"]
@@ -26,7 +26,7 @@ optional = false
 [[piece]]
 name = "tokenol"
 repo = "farhanferoz/tokenol"
-version = "e13524da639c120e47ecc92fab3beb9558a5ee8f"
+version = "bb59dc2089ff164f55ce5892af602075833d393a"
 kind = "uv-tool"
 clone_dir = "claude_rate_limit"
 # uv, not pip: pip refuses Ubuntu 24.04's system Python (PEP 668); uv tool install measured 2026-11-22 in ubuntu:24.04.
@@ -37,7 +37,7 @@ optional = false
 [[piece]]
 name = "corpus-search"
 repo = "farhanferoz/corpus-search"
-version = "736edde7442161385a808cc7db777c09d5bf2da0"
+version = "c2abf09f8f6ec7b55a976a46cbdc485e4852d3a3"
 kind = "uv-tool"
 clone_dir = "corpus-search"
 install = ["uv tool install --editable ."]  # inferred: README documents only `uv sync` and `uv run`
@@ -47,7 +47,7 @@ optional = false
 [[piece]]
 name = "localmodels"
 repo = "farhanferoz/localmodels"
-version = "eb87dce1e885dde9224c0c9c949a40e5936900b8"
+version = "cb181a7ecc48d17a8f4b7f7ced03e27372cee9d2"
 kind = "uv-tool"
 clone_dir = "localmodels"
 install = ["uv tool install --editable ."]  # inferred: README documents only `uv add localmodels` (library use)
@@ -73,7 +73,7 @@ optional = true
 [[piece]]
 name = "playwright-agents"
 repo = "farhanferoz/playwright-agents"
-version = "681f50ab11722dfc2de90d3293f664e58951cd98"
+version = "886bfb3f68824c830b622313c3b7320b32f7a99f"
 kind = "marketplace"
 clone_dir = "playwright-agents"
 install = ["claude plugin marketplace add farhanferoz/playwright-agents", "claude plugin install playwright-agents@playwright-agents"]
@@ -83,7 +83,7 @@ optional = true
 [[piece]]
 name = "training-supervisor-plugin"
 repo = "farhanferoz/training-supervisor-plugin"
-version = "806d09584794ccb8609d0d7c8808eec55a4289ef"
+version = "28593e71fb1ba03e3d00e9e3bb10ebe18f80fd7b"
 kind = "marketplace"
 clone_dir = "training-supervisor-plugin"
 install = ["claude plugin marketplace add farhanferoz/training-supervisor-plugin"]  # README names the upstream t2ance/training-monitor-plugin; our fork inferred
@@ -93,7 +93,7 @@ optional = true
 [[piece]]
 name = "devbox-kit"
 repo = "farhanferoz/devbox-kit"
-version = "420441e09a04fb21bf463e55f2a6926001518c46"
+version = "810971caca4643030e6b2195db30acd929ea192c"
 kind = "link-only"  # inferred: README steps need an SSH alias per box, so setupctl cannot run them unattended
 clone_dir = "devbox-kit"
 optional = true
@@ -101,7 +101,7 @@ optional = true
 [[piece]]
 name = "fleet-monitoring"
 repo = "farhanferoz/fleet-monitoring"
-version = "608cabba0ad6f267b090f8332d83cd1f5c6a9a03"
+version = "cd57eb651b5f0a70f21face46c7023f04f183a6b"
 kind = "link-only"  # inferred: README needs Docker, per-site .env and secrets before `docker compose up -d`
 clone_dir = "fleet-monitoring"
 optional = true

@@ -59,6 +59,7 @@ and that can allow, block, rewrite or feed back. A **rule** is written text the 
 | Spend per session, day and tool | tool | [tokenol](https://github.com/farhanferoz/tokenol) | `uv tool install --editable '.[serve]'` in a clone |
 | Cost of each subagent, and of the last fan-out at the next session start | skill, hook | claude-skills `plugins/orchestration/skills/agent-cost`, `plugins/session-hooks/hooks/cost_report.sh` | `orchestration` and `session-hooks` plugins |
 | Keep the prompt cache warm through an idle gap | skill | ccage `share/skills/keepwarm` | ccage |
+| Status line: context used, the 5-hour and 7-day limits, cache state, open plan items | tool | claude-skills `plugins/session-hooks/scripts/statusline-command.sh` | copy it and set `statusLine` (session-hooks README) |
 | Find skills nobody uses, so they can be switched off | tool | claude-skills `plugins/session-hooks/scripts/skill_usage_inventory.py` | `session-hooks` plugin |
 | **Code quality** | | | |
 | One coding standard in every session | hook, rule | claude-skills `plugins/coding-standard` (`reference/coding-standards.md`) | `/plugin install coding-standard@claude-skills` |
