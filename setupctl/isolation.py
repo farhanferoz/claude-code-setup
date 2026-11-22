@@ -18,6 +18,7 @@ from pathlib import Path
 class ContainerConfig:
     docker: str
     image: str
+    chroot: str  # absolute, because the caller's PATH is passed in and may not include the image's sbin
     writable_tmpfs: tuple[str, ...]  # host paths that become empty, writable, per-run tmpfs
     pass_env: tuple[str, ...]  # environment variable names carried into the container
 
@@ -40,5 +41,5 @@ def container_command(inner: Sequence[str], cfg: ContainerConfig, writable_binds
     for name in cfg.pass_env:
         if name in os.environ:
             args += ["-e", f"{name}={os.environ[name]}"]
-    args += [cfg.image, "chroot", f"--userspec={os.getuid()}:{os.getgid()}", HOST_MOUNT, *inner]
+    args += [cfg.image, cfg.chroot, f"--userspec={os.getuid()}:{os.getgid()}", HOST_MOUNT, *inner]
     return args

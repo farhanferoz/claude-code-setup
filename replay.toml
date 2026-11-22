@@ -28,6 +28,7 @@ permission_mode = "bypassPermissions"
 [container]
 docker = "docker"
 image = "ubuntu:24.04"
+chroot = "/usr/sbin/chroot"  # fact: where the ubuntu image keeps chroot
 python = "/usr/bin/python3"
 pass_env = ["HOME", "USER", "PATH", "LANG", "TERM"]
 

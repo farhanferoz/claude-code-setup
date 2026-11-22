@@ -96,8 +96,8 @@ def _replay(args: argparse.Namespace, argv: Sequence[str]) -> int:
     conf = full["sandbox"]
     if (args.isolation or conf["isolation"]) == "container":
         c = full["container"]
-        cfg = isolation.ContainerConfig(c["docker"], c["image"], tuple(_expand(p) for p in conf["writable_tmpfs"]),
-                                        tuple(c["pass_env"]))
+        cfg = isolation.ContainerConfig(c["docker"], c["image"], c["chroot"],
+                                        tuple(_expand(p) for p in conf["writable_tmpfs"]), tuple(c["pass_env"]))
         repo = Path(__file__).resolve().parent.parent
         inner = ["/usr/bin/env", f"PYTHONPATH={repo}", c["python"], "-m", "setupctl", *argv, "--isolation", "none"]
         out_dir = args.out.resolve().parent
