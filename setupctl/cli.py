@@ -12,19 +12,31 @@ import tomllib
 from collections.abc import Sequence
 from pathlib import Path
 
-from setupctl import corpus, diffing, isolation, replay
+from setupctl import corpus, diffing, install, isolation, replay
+from setupctl.manifest import ManifestError, load_manifest
 from setupctl.snapshot import SnapshotConfig, SnapshotError, hooks_in_settings, take_snapshot, write_snapshot
 
 # A fact about the repository layout: the shipped defaults file sits beside the package.
 DEFAULTS_FILE = Path(__file__).resolve().parent.parent / "snapshot.toml"
 REPLAY_DEFAULTS_FILE = Path(__file__).resolve().parent.parent / "replay.toml"
+MANIFEST_FILE = Path(__file__).resolve().parent.parent / "manifest.toml"
 EXIT_USAGE = 2  # a fact: the conventional exit status for "not implemented / bad usage"
 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="setupctl")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("install", help="install the manifest pieces (not implemented yet)")
+    for name, text in (("install", "install the manifest pieces"), ("doctor", "check the installed pieces")):
+        sp = sub.add_parser(name, help=text)
+        sp.add_argument("--manifest", type=Path, default=MANIFEST_FILE)
+        sp.add_argument("--only", action="append", default=[], metavar="PIECE")
+        sp.add_argument("--skip", action="append", default=[], metavar="PIECE")
+        sp.add_argument("--all", action="store_true", help="include the optional pieces")
+        if name == "install":
+            sp.add_argument("--dry-run", action="store_true", help="print each command; run nothing")
+            sp.add_argument("--dev-root", type=Path, default=Path("~/dev"), help="where existing clones are reused")
+            sp.add_argument("--src-root", type=Path, default=Path("~/.local/share/claude-code-setup/src"),
+                            help="where missing pieces are cloned")
     snap = sub.add_parser("snapshot", help="record what this machine runs")
     snap.add_argument("--out", type=Path, required=True, help="JSON file to write (the only file written)")
     snap.add_argument("--config", type=Path, default=DEFAULTS_FILE, help="TOML of defaults (default: snapshot.toml)")
@@ -173,9 +185,18 @@ def _config(args: argparse.Namespace) -> SnapshotConfig:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
-    if args.command == "install":
-        print("setupctl install: not implemented yet.", file=sys.stderr)
-        return EXIT_USAGE
+    if args.command in ("install", "doctor"):
+        try:
+            pieces = install.select(load_manifest(args.manifest), args.only, args.skip, args.all)
+        except (ManifestError, install.InstallError) as exc:
+            print(f"setupctl {args.command}: {exc}", file=sys.stderr)
+            return EXIT_USAGE
+        if args.command == "doctor":
+            results = install.doctor(pieces)
+        else:
+            opts = install.Options(args.dev_root.expanduser(), args.src_root.expanduser(), args.dry_run)
+            results = install.install(pieces, opts)
+        return 1 if any(r.outcome is install.Outcome.FAILED for r in results) else 0
     if args.command in ("corpus", "replay", "diff"):
         try:
             if args.command == "replay":
