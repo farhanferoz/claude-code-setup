@@ -16,7 +16,7 @@ optional = false
 [[piece]]
 name = "claude-skills"
 repo = "farhanferoz/claude-skills"
-version = "d00323812fd2f0291ede4ab668f820af36833d49"
+version = "cd924e9f41f232d47440c39e2e4a2d724ba8c18f"
 kind = "marketplace"
 clone_dir = "claude-skills"
 install = ["claude plugin marketplace add farhanferoz/claude-skills"]
