@@ -36,8 +36,8 @@ and that can allow, block, rewrite or feed back. A **rule** is written text the 
 | Practice | Kind | Where it lives | Install alone |
 |---|---|---|---|
 | **Context hygiene and running unattended** | | | |
-| Checkpoint before `/clear`: state and next steps in `RESUME.md`, rulings in `DECISIONS.md` | skill | [ccage](https://github.com/farhanferoz/ccage) `share/skills/checkpoint` | ccage `./install.sh` |
-| Read `RESUME.md`, `DECISIONS.md` and the plans back after every `/clear`, in parts when large | hook | ccage `share/hooks/resume_autoload.sh`, `share/hooks/session_doc_chunk.sh` | ccage |
+| Checkpoint before `/clear`: state and next steps in `RESUME.md`, rulings in `DECISIONS.md` | skill | [ccage](https://github.com/farhanferoz/ccage) `share/skills/checkpoint` | ccage `./install.sh`, or `/plugin install session-continuity@claude-skills` (ccage `plugin/`) |
+| Read `RESUME.md`, `DECISIONS.md` and the plans back after every `/clear`, in parts when large | hook | ccage `share/hooks/resume_autoload.sh`, `share/hooks/session_doc_chunk.sh` | ccage, or `/plugin install session-continuity@claude-skills` (RESUME and DECISIONS only) |
 | Keep `RESUME.md` small and refuse a write that drops open next steps | hook | ccage `share/hooks/resume_budget_check.sh` | ccage |
 | A plan box ticks only when its check passes | hook | ccage `share/hooks/plan_contract_guard.sh`, `lib/ccage_plan.py` | ccage |
 | Automatic checkpoint, clear and resume at a context threshold | tool | ccage `bin/ccage-auto` | ccage |
@@ -45,7 +45,7 @@ and that can allow, block, rewrite or feed back. A **rule** is written text the 
 | Guards that block with the fix, rewrite, or feed back, each logging every decision | hook | [claude-skills](https://github.com/farhanferoz/claude-skills) `plugins/guards` | `/plugin install guards@claude-skills` |
 | One set of policy hooks in every project | tool | ccage, with `CCAGE_SEED_LOCAL_HOOKS=1` (ccage `docs/SEED-LOCAL-HOOKS.md`) | ccage |
 | **Organisation** | | | |
-| Project layout: `RESUME.md`, `DECISIONS.md`, `CHANGELOG.md`, `plans/` with `archive/` | skill | ccage `share/skills/checkpoint` (creates the files in a new project) | ccage |
+| Project layout: `RESUME.md`, `DECISIONS.md`, `CHANGELOG.md`, `plans/` with `archive/` | skill | ccage `share/skills/checkpoint` (creates the files in a new project) | ccage, or `/plugin install session-continuity@claude-skills` |
 | Session start reports plans that fell behind the disk, the rulings or `RESUME.md` | hook | ccage `lib/ccage_plan.py` | ccage |
 | Scratch folders pruned at session start | hook | claude-skills `plugins/session-hooks/hooks/session_scratch_prune.sh` | `/plugin install session-hooks@claude-skills` |
 | Refuse files with junk names in a repository | hook | claude-skills `plugins/guards/hooks/clutter_guard.sh` | `guards` plugin |
@@ -58,7 +58,7 @@ and that can allow, block, rewrite or feed back. A **rule** is written text the 
 | **Cost and context** | | | |
 | Spend per session, day and tool | tool | [tokenol](https://github.com/farhanferoz/tokenol) | `uv tool install --editable '.[serve]'` in a clone |
 | Cost of each subagent, and of the last fan-out at the next session start | skill, hook | claude-skills `plugins/orchestration/skills/agent-cost`, `plugins/session-hooks/hooks/cost_report.sh` | `orchestration` and `session-hooks` plugins |
-| Keep the prompt cache warm through an idle gap | skill | ccage `share/skills/keepwarm` | ccage |
+| Keep the prompt cache warm through an idle gap | skill | ccage `share/skills/keepwarm` | ccage, or `/plugin install session-continuity@claude-skills` |
 | Status line: context used, the 5-hour and 7-day limits, cache state, open plan items | tool | claude-skills `plugins/session-hooks/scripts/statusline-command.sh` | copy it and set `statusLine` (session-hooks README) |
 | Find skills nobody uses, so they can be switched off | tool | claude-skills `plugins/session-hooks/scripts/skill_usage_inventory.py` | `session-hooks` plugin |
 | **Code quality** | | | |
@@ -69,6 +69,7 @@ and that can allow, block, rewrite or feed back. A **rule** is written text the 
 | Simplify before review | skill | Claude Code's built-in `/simplify` | none |
 | **Research quality** | | | |
 | Figure workflow, methodology review, checks before a long training run, summaries grounded in notes | skill | claude-skills `plugins/research-method` | `/plugin install research-method@claude-skills` |
+| Talks and slide decks: message and audience first, one prototype slide, sourced numbers, render and look, cold read | skill, tool | claude-skills `plugins/talk-deck` | `/plugin install talk-deck@claude-skills` |
 | Research report as a self-contained chapter with a cold read | skill | claude-skills `plugins/research-report` | `/plugin install research-report@claude-skills` |
 | Search your own notes, PDFs and notebooks | tool | [corpus-search](https://github.com/farhanferoz/corpus-search) | `uv tool install --editable .` in a clone |
 | Simulated review panel for your own draft application | skill | claude-skills `plugins/review-panel` | `/plugin install review-panel@claude-skills` |
