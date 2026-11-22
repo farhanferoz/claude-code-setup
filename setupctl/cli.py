@@ -122,6 +122,9 @@ def _replay(args: argparse.Namespace, argv: Sequence[str]) -> int:
 
 
 def _diff(args: argparse.Namespace) -> int:
+    for path in (args.old, args.new):
+        if not path.is_file():
+            raise SnapshotError(f"{path} does not exist; run the replay or snapshot that writes it first.")
     normalise = tomllib.loads(args.config.read_text()).get("diff", {}).get("normalise", [])
     allowed = diffing.load_allowed(args.allow, [tuple(p) for p in normalise])
     if args.old.suffix == ".jsonl":
