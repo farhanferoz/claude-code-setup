@@ -126,7 +126,8 @@ def _read_settings(path: Path) -> dict[str, Any]:
     return data
 
 
-def _hooks_in(path: Path, cfg: SnapshotConfig) -> list[HookReg]:
+def hooks_in_settings(path: Path, cfg: SnapshotConfig) -> list[HookReg]:
+    """Every command-hook registration in one settings file, scripts resolved through symlinks and hashed."""
     regs: list[HookReg] = []
     hooks = _read_settings(path).get("hooks", {})
     if not isinstance(hooks, dict):
@@ -158,7 +159,7 @@ def _collect_hooks(cfg: SnapshotConfig) -> tuple[HookReg, ...]:
     regs: list[HookReg] = []
     for path in paths:
         if path.is_file() and not _denied(path, cfg):
-            regs.extend(_hooks_in(path, cfg))
+            regs.extend(hooks_in_settings(path, cfg))
     return tuple(regs)
 
 

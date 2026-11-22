@@ -1,0 +1,30 @@
+# Defaults for `setupctl corpus build`, `setupctl replay` and `setupctl diff`: today's values on our machines.
+# Every key is also a CLI flag.
+transcripts = "~/.claude-*/projects/**/*.jsonl"
+per_tool_default = 300
+seed = 0
+# Bash carries most guards, so it gets a bigger sample.
+per_tool = { Bash = 3000 }
+
+[sandbox]
+# container: re-run inside a read-only view of the host (setupctl/isolation.py); none: run hooks directly.
+isolation = "container"
+per_call_timeout_s = 10
+writable_tmpfs = ["/tmp", "~/.local/state", "~/.cache"]
+call_root = "/tmp"
+workers = 16
+permission_mode = "bypassPermissions"
+
+[container]
+docker = "docker"
+image = "ubuntu:24.04"
+python = "/usr/bin/python3"
+pass_env = ["HOME", "USER", "PATH", "LANG", "TERM"]
+
+# (regex, replacement) pairs applied to added context and refusal text before comparing: a hook file that moved
+# behind a symlink may print its new path, which is not a change in behaviour.
+[diff]
+normalise = [
+  ['(/home/[^/]+|~)/\.claude/hooks/', '<HOOKS>/'],
+  ['/home/[^/]+/dev/claude-skills/plugins/[^/]+/hooks/', '<HOOKS>/'],
+]
