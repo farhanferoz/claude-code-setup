@@ -27,10 +27,11 @@ optional = false
 name = "tokenol"
 repo = "farhanferoz/tokenol"
 version = "e13524da639c120e47ecc92fab3beb9558a5ee8f"
-kind = "pip-editable"
+kind = "uv-tool"
 clone_dir = "claude_rate_limit"
-install = ["python3 -m pip install --editable '.[serve]'"]  # README: pip install 'tokenol[serve]'; editable form inferred
-check = ["tokenol --help"]  # inferred
+# uv, not pip: pip refuses Ubuntu 24.04's system Python (PEP 668); uv tool install measured 2026-11-22 in ubuntu:24.04.
+install = ["uv tool install --editable '.[serve]'"]
+check = ["tokenol --help"]  # exits 0 (measured 2026-11-22)
 optional = false
 
 [[piece]]

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      # uv tool installs and ccage's CLI land in ~/.local/bin.
+      - name: put ~/.local/bin on PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: lint
+        run: uvx ruff check .
+
+      - name: tests
+        run: uv run --no-project --with pytest python -m pytest -q
+
+      - name: dry run of the full install
+        run: ./install --all --dry-run
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      # Claude Code cloned a marketplace over SSH in a local run. The runner has no SSH key, so git uses https.
+      - name: clone GitHub over https
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:"
+
+      # The core pieces need no Claude account: marketplace add and plugin validate run without one.
+      - name: install the core pieces
+        run: ./install
+
+      - name: doctor
+        run: python3 -m setupctl doctor
