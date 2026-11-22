@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Thin bootstrap: check the interpreter, then hand over to setupctl.
+set -euo pipefail
+here="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "install: python3 not found. Install Python 3.11 or newer, then run ./install again." >&2
+  exit 1
+fi
+if ! python3 -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)'; then
+  echo "install: python3 is older than 3.11 ($(python3 --version 2>&1)). Install Python 3.11 or newer." >&2
+  exit 1
+fi
+cd "$here"
+exec python3 -m setupctl install "$@"

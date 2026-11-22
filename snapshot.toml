@@ -1,0 +1,22 @@
+# Defaults for `setupctl snapshot`: today's values on our machines. Every key is also a CLI flag.
+# Paths may start with ~. Globs in reference_files are relative to master_dir.
+master_dir = "~/.claude"
+cage_glob = "~/.claude-*/settings.json"
+skill_roots = ["~/.claude/skills"]
+agent_roots = ["~/.claude/agents"]
+reference_files = ["CLAUDE.md", "main-session-doctrine.md", "rules/*.md", "hooks/*", "skills/*/SKILL.md", "agents/*.md"]
+# Each alternative has exactly one capture group, the bare name.
+reference_pattern = '''`([a-z][\w:-]*)` skill|(?<![\w./~-])/([a-z][a-z0-9-]+)(?![\w/.-])|Skill\(([\w:-]+)\)|(?:agentType|subagent_type)["']?\s*[:=]\s*["'`]?([A-Za-z][\w:-]*)'''
+tree_ignore = ["__pycache__", ".git"]
+# Never opened, wherever they appear: credentials and transcripts.
+deny_names = [".credentials.json", "projects"]
+
+[tools]
+claude = "claude --version"
+python3 = "python3 --version"
+git = "git --version"
+uv = "uv --version"
+jq = "jq --version"
+tokenol = "tokenol --version"
+corpus-search = "corpus-search --help"
+localmodels = "localmodels --help"

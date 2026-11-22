@@ -1,0 +1,106 @@
+# One [[piece]] per installable piece. Data, not code: setupctl reads this file.
+# version = the commit the piece was last verified at; empty only for link-only pieces.
+# install/check are command lines run in the piece's clone (or as written, for a marketplace).
+# Entries marked "inferred" below were not given by the repository's own README.
+
+[[piece]]
+name = "ccage"
+repo = "farhanferoz/ccage"
+version = "f30253826137d9cd6df7d9c58dde42c7962300db"
+kind = "ccage"
+clone_dir = "ccage"
+install = ["./install.sh"]
+check = ["ccage --help"]  # inferred
+optional = false
+
+[[piece]]
+name = "claude-skills"
+repo = "farhanferoz/claude-skills"
+version = "6bb36182a79371029aaec3349796ad4c0b79d0e3"
+kind = "marketplace"
+clone_dir = "claude-skills"
+install = ["claude plugin marketplace add farhanferoz/claude-skills"]
+check = ["claude plugin marketplace list"]  # inferred
+optional = false
+
+[[piece]]
+name = "tokenol"
+repo = "farhanferoz/tokenol"
+version = "e13524da639c120e47ecc92fab3beb9558a5ee8f"
+kind = "pip-editable"
+clone_dir = "claude_rate_limit"
+install = ["python3 -m pip install --editable '.[serve]'"]  # README: pip install 'tokenol[serve]'; editable form inferred
+check = ["tokenol --help"]  # inferred
+optional = false
+
+[[piece]]
+name = "corpus-search"
+repo = "farhanferoz/corpus-search"
+version = "736edde7442161385a808cc7db777c09d5bf2da0"
+kind = "uv-tool"
+clone_dir = "corpus-search"
+install = ["uv tool install --editable ."]  # inferred: README documents only `uv sync` and `uv run`
+check = ["corpus-search --help"]  # inferred
+optional = false
+
+[[piece]]
+name = "localmodels"
+repo = "farhanferoz/localmodels"
+version = "eb87dce1e885dde9224c0c9c949a40e5936900b8"
+kind = "uv-tool"
+clone_dir = "localmodels"
+install = ["uv tool install --editable ."]  # inferred: README documents only `uv add localmodels` (library use)
+check = ["localmodels --help"]  # inferred
+optional = false
+
+[[piece]]
+name = "preflight"
+repo = "alan-turing-institute/preflight"
+version = "1e324eabedfb79a0e197eba83027f0991d2be887"
+kind = "link-only"
+clone_dir = "turing/preflight"
+optional = false
+
+[[piece]]
+name = "ogc"
+repo = "farhanferoz/ogc"
+version = "d32939c8feb0ef8e24da78e764a3c57d9fb4f714"  # remote HEAD; the local clone ~/dev/opencode is on another branch
+kind = "link-only"  # inferred: a Go program (README: go install), no manifest kind for Go yet
+clone_dir = "opencode"
+optional = true
+
+[[piece]]
+name = "playwright-agents"
+repo = "farhanferoz/playwright-agents"
+version = "681f50ab11722dfc2de90d3293f664e58951cd98"
+kind = "marketplace"
+clone_dir = "playwright-agents"
+install = ["claude plugin marketplace add farhanferoz/playwright-agents", "claude plugin install playwright-agents@playwright-agents"]
+check = ["claude plugin list"]  # inferred
+optional = true
+
+[[piece]]
+name = "training-supervisor-plugin"
+repo = "farhanferoz/training-supervisor-plugin"
+version = "806d09584794ccb8609d0d7c8808eec55a4289ef"
+kind = "marketplace"
+clone_dir = "training-supervisor-plugin"
+install = ["claude plugin marketplace add farhanferoz/training-supervisor-plugin"]  # README names the upstream t2ance/training-monitor-plugin; our fork inferred
+check = ["claude plugin marketplace list"]  # inferred
+optional = true
+
+[[piece]]
+name = "devbox-kit"
+repo = "farhanferoz/devbox-kit"
+version = "420441e09a04fb21bf463e55f2a6926001518c46"
+kind = "link-only"  # inferred: README steps need an SSH alias per box, so setupctl cannot run them unattended
+clone_dir = "devbox-kit"
+optional = true
+
+[[piece]]
+name = "fleet-monitoring"
+repo = "farhanferoz/fleet-monitoring"
+version = "608cabba0ad6f267b090f8332d83cd1f5c6a9a03"
+kind = "link-only"  # inferred: README needs Docker, per-site .env and secrets before `docker compose up -d`
+clone_dir = "fleet-monitoring"
+optional = true
