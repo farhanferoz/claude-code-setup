@@ -16,7 +16,10 @@ cd claude-code-setup
 python3 -m setupctl doctor # check each installed piece and name the install line of any that failed
 ```
 
-`./install` needs Python 3.11 or newer. It reuses a clone under `~/dev/<name>` when the clone's `origin` matches the
+Install these first: Python 3.11 or newer, `git`, [`uv`](https://docs.astral.sh/uv/), `jq` (ccage's installer
+stops without it), and a C/C++ compiler (corpus-search builds `llama-cpp-python`, which PyPI ships only as source).
+On Debian or Ubuntu: `sudo apt install git python3 jq build-essential`; on macOS: `xcode-select --install` and
+`brew install jq`. `./install` reuses a clone under `~/dev/<name>` when the clone's `origin` matches the
 manifest (change the folder with `--dev-root`), and otherwise clones the pinned version under
 `~/.local/share/claude-code-setup/src` (`--src-root`). `--only NAME` and `--skip NAME` select pieces. The command
 never edits a shell start-up file itself. ccage's own installer appends one sourcing loop to `~/.bashrc` or
