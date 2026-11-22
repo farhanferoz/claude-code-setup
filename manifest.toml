@@ -93,7 +93,7 @@ optional = true
 [[piece]]
 name = "devbox-kit"
 repo = "farhanferoz/devbox-kit"
-version = "810971caca4643030e6b2195db30acd929ea192c"
+version = "1d47410f4c1f56af6972245c5c8f8b1fe1ed00bc"
 kind = "link-only"  # inferred: README steps need an SSH alias per box, so setupctl cannot run them unattended
 clone_dir = "devbox-kit"
 optional = true
